@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<MessageHandler>();
 
+
+builder.Services.AddSingleton<Emitter>();
 builder.Services.AddSingleton<Receiver>(sp =>
     new Receiver("update.*",
         sp.GetRequiredService<MessageHandler>().HandleWeatherMessage

@@ -28,11 +28,11 @@ namespace RPI_API.Utils
         {
             _connection = await _factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
-            await _channel.ExchangeDeclareAsync(exchange: "weather_updates", type: ExchangeType.Topic);
+            await _channel.ExchangeDeclareAsync(exchange: "led_matrix", type: ExchangeType.Topic);
 
             QueueDeclareOk queueDeclareResult = await _channel.QueueDeclareAsync();
             _queueName = queueDeclareResult.QueueName;
-            await _channel.QueueBindAsync(queue: _queueName, exchange: "weather_updates", routingKey: _bindingKey);
+            await _channel.QueueBindAsync(queue: _queueName, exchange: "led_matrix", routingKey: _bindingKey);
         }
 
         public async Task ReceiveAsync()
