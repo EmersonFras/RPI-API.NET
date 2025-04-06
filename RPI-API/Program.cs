@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using RPI_API.Data;
 using RPI_API.Services;
 using RPI_API.Utils;
 
@@ -5,19 +7,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddSingleton<MessageHandler>();
-
-
 builder.Services.AddSingleton<Emitter>();
-builder.Services.AddSingleton<Receiver>(sp =>
+
+builder.Services.AddScoped<MessageHandler>();
+builder.Services.AddScoped<Receiver>(sp =>
     new Receiver("update.*",
         sp.GetRequiredService<MessageHandler>().HandleWeatherMessage
     ));
+builder.Services.AddHostedService<ReceiveUpdates>();
 
 builder.Services.AddHostedService<ReceiveUpdates>();
 
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<WeatherDisplayContext>(options =>
+    options.UseSqlite(connectionString));
+
+
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapifswa
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

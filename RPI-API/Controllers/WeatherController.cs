@@ -1,20 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RPI_API.Data;
 
 namespace RPI_API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class WeatherController : ControllerBase
     {
-        public Task<IActionResult> GetWeather()
+
+        public readonly WeatherDisplayContext _context;
+
+        public WeatherController(WeatherDisplayContext context)
         {
-            // Placeholder for actual weather data retrieval logic
-            var weatherData = new
+            _context = context;
+        }
+
+        // GET api/weather
+        [HttpGet]
+        public async Task<IActionResult> GetWeather()
+        {
+            var entry = await _context.WeatherDisplayData.FirstOrDefaultAsync();
+            if (entry == null)
             {
-                Temperature = "22°C",
-                Condition = "Sunny"
-            };
-
-
-            return Task.FromResult<IActionResult>(Ok(weatherData));
+                return NotFound("No weather data found");
+            }
+            return Ok(entry);
         }
     }
 }

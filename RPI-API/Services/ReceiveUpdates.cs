@@ -5,17 +5,20 @@ namespace RPI_API.Services
     public class ReceiveUpdates : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly Receiver _receiver;
+        private Receiver? _receiver;
 
-        public ReceiveUpdates(IServiceScopeFactory scopeFactory, Receiver receiver)
+        public ReceiveUpdates(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
-            _receiver = receiver;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Starting to receive updates...");
+
+            var scope = _scopeFactory.CreateScope();
+            _receiver = scope.ServiceProvider.GetRequiredService<Receiver>();
+
             await _receiver.ReceiveAsync();
             while (!stoppingToken.IsCancellationRequested)
             {

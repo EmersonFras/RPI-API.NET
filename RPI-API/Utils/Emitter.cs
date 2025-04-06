@@ -22,19 +22,42 @@ namespace RPI_API.Utils
         private async Task EmitterAsync()
         {
             _connection = await _factory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
+
+            // for publisher confirms
+            var channelOpts = new CreateChannelOptions(
+                publisherConfirmationsEnabled: true,
+                publisherConfirmationTrackingEnabled: true,
+                outstandingPublisherConfirmationsRateLimiter: new ThrottlingRateLimiter(5) // 5 was randomly decided
+            );
+
+            _channel = await _connection.CreateChannelAsync(channelOpts) ;
 
             await _channel.ExchangeDeclareAsync(exchange: "display_update", type: ExchangeType.Topic);
         }
 
-        public async Task EmitAsync(string message, string topic)
+        public async Task<bool> EmitAsync(string message, string topic)
         {
+            if (_channel == null)
+            {
+                throw new InvalidOperationException("Channel is not initialized.");
+            }
             await _initializeTask;
 
             var body = Encoding.UTF8.GetBytes(message);
-            await _channel.BasicPublishAsync(exchange: "display_update",
-                                     routingKey: topic,
-                                     body: body);
+
+            try
+            {
+                await _channel.BasicPublishAsync(exchange: "display_update",
+                                         routingKey: topic,
+                                         body: body);
+                return true;
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Emitter] Saw nack or return: {ex.Message}");
+                return false;
+            }
+
         }
 
         public async ValueTask DisposeAsync()
