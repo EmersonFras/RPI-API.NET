@@ -14,7 +14,8 @@ namespace RPI_API.Utils
 
         public Emitter()
         {
-            _factory = new ConnectionFactory { HostName = "localhost" };
+            string hostname = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
+            _factory = new ConnectionFactory { HostName = hostname };
             _initializeTask = EmitterAsync();
         }
 

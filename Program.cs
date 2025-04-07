@@ -18,7 +18,6 @@ builder.Services.AddHostedService<ReceiveUpdates>();
 
 builder.Services.AddHostedService<ReceiveUpdates>();
 
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<WeatherDisplayContext>(options =>
@@ -26,15 +25,26 @@ builder.Services.AddDbContext<WeatherDisplayContext>(options =>
 
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapifswa
-builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<WeatherDisplayContext>();
+    var dbPath = context.Database.GetDbConnection().DataSource;
+    Console.WriteLine("🔍 Using database at: " + dbPath);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

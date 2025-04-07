@@ -17,7 +17,8 @@ namespace RPI_API.Utils
 
         public Receiver(string bindingKey, Func<object, BasicDeliverEventArgs, Task> handleMessage)
         {
-            _factory = new ConnectionFactory { HostName = "rabbitmq" };
+            string hostname = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
+            _factory = new ConnectionFactory { HostName = hostname };
             _bindingKey = bindingKey;
             _handleMessage = handleMessage;
 
