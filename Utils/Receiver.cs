@@ -22,6 +22,7 @@ namespace RPI_API.Utils
             _bindingKey = bindingKey;
             _handleMessage = handleMessage;
 
+            // Tracker for when Receiver is init
             _initializeTask = ReceiverAsync();
         }
 
@@ -38,6 +39,7 @@ namespace RPI_API.Utils
 
         public async Task ReceiveAsync()
         {
+            // Waits for Receiver to be init
             await _initializeTask;
 
             var consumer = new AsyncEventingBasicConsumer(_channel);

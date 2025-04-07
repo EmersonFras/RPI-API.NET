@@ -16,6 +16,7 @@ namespace RPI_API.Controllers
             _context = context;
         }
 
+        // Gets all current weather display data
         // GET api/weather
         [HttpGet]
         public async Task<IActionResult> GetWeather()

@@ -1,5 +1,10 @@
 ﻿namespace RPI_API.Models
 {
+    /*
+        TODO: This works fine now but would be better to split
+        start/stop time into a display data table seperate since
+        it is universal to all displays. 
+    */
     public class WeatherDisplayData
     {
         public int Id { get; set; } = 1;

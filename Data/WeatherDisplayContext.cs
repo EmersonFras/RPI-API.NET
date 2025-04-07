@@ -13,6 +13,7 @@ namespace RPI_API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Database seeding
             modelBuilder.Entity<WeatherDisplayData>().HasData(
                 new WeatherDisplayData
                 {

@@ -10,10 +10,13 @@ namespace RPI_API.Utils
     {
 
         private readonly WeatherDisplayContext _context;
+
         public MessageHandler(WeatherDisplayContext context)
         {
             _context = context;
         }
+
+
         public async Task HandleWeatherMessage(object sender, BasicDeliverEventArgs eventArgs)
         {
             string message = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
@@ -23,6 +26,7 @@ namespace RPI_API.Utils
 
             if (entry != null)
             {
+                // Message format is a number. Identify what type of message and then save in DB.
                 if (eventArgs.RoutingKey == "update.weather")
                 {
                     entry.Temperature = message;

@@ -16,6 +16,8 @@ namespace RPI_API.Utils
         {
             string hostname = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
             _factory = new ConnectionFactory { HostName = hostname };
+
+            // Initialize Task is to track when emitter is fully setup
             _initializeTask = EmitterAsync();
         }
 
@@ -24,7 +26,7 @@ namespace RPI_API.Utils
         {
             _connection = await _factory.CreateConnectionAsync();
 
-            // for publisher confirms
+            // Sets up to give publisher confirms
             var channelOpts = new CreateChannelOptions(
                 publisherConfirmationsEnabled: true,
                 publisherConfirmationTrackingEnabled: true,
@@ -42,6 +44,8 @@ namespace RPI_API.Utils
             {
                 throw new InvalidOperationException("Channel is not initialized.");
             }
+
+            // Waits for emitter to be fully init
             await _initializeTask;
 
             var body = Encoding.UTF8.GetBytes(message);

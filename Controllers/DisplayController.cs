@@ -20,6 +20,7 @@ namespace RPI_API.Controllers
             _context = context;
         }
 
+        // Set/Update the current Display
         // POST api/display
         [HttpPost]
         public async Task<IActionResult> UpdateDisplay([FromBody] string data)
@@ -31,6 +32,7 @@ namespace RPI_API.Controllers
             else return BadRequest("Failed to send message to Display Service");
         }
 
+        // Clearing the display
         // POST api/display/clear
         [HttpPost("clear")]
         public async Task<IActionResult> ClearDisplay()
@@ -41,6 +43,7 @@ namespace RPI_API.Controllers
             else return BadRequest("Failed to send message to Display Service");
         }
 
+        // Updates the display data, text, on/off time etc.
         // POST api/display/data
         [HttpPost("data")]
         public async Task<IActionResult> UpdateDisplayData([FromBody] DisplayDataDto data)
@@ -50,9 +53,17 @@ namespace RPI_API.Controllers
                 return BadRequest("Invalid data");
             }
 
+            // Waits for publisher confirmation 
             bool ack = await _emitter.EmitAsync(message: data.ToString(),
                                                 "display.data");
 
+
+            /*
+            * TO-DO: This ACKS before knowing if the data in the exchange was distributed
+            * to the subscribers. This is not a problem for now, but it would be
+            * better to wait for the confirmation from the display service before updating
+            * the database.
+            */
             if (ack)
             {
                 var entry = await _context.WeatherDisplayData.FirstOrDefaultAsync();
