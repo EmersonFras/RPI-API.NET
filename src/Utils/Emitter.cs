@@ -35,7 +35,7 @@ namespace RPI_API.Utils
 
             _channel = await _connection.CreateChannelAsync(channelOpts) ;
 
-            await _channel.ExchangeDeclareAsync(exchange: "display_update", type: ExchangeType.Topic);
+            await _channel.ExchangeDeclareAsync(exchange: "led_matrix", type: ExchangeType.Topic);
         }
 
         public async Task<bool> EmitAsync(string message, string topic)
@@ -52,7 +52,7 @@ namespace RPI_API.Utils
 
             try
             {
-                await _channel.BasicPublishAsync(exchange: "display_update",
+                await _channel.BasicPublishAsync(exchange: "led_matrix",
                                          routingKey: topic,
                                          body: body);
                 return true;

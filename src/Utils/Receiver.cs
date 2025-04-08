@@ -42,6 +42,11 @@ namespace RPI_API.Utils
             // Waits for Receiver to be init
             await _initializeTask;
 
+            if (_channel is null)
+                throw new InvalidOperationException("Channel was not initialized.");
+            if (_queueName is null)
+                throw new InvalidOperationException("Queue name was not initialized.");
+                
             var consumer = new AsyncEventingBasicConsumer(_channel);
             consumer.ReceivedAsync +=  (sender, eventArgs) => _handleMessage(sender, eventArgs);
 

@@ -27,11 +27,11 @@ namespace RPI_API.Utils
             if (entry != null)
             {
                 // Message format is a number. Identify what type of message and then save in DB.
-                if (eventArgs.RoutingKey == "update.weather")
+                if (eventArgs.RoutingKey == "update.temperature")
                 {
                     entry.Temperature = message;
                 } 
-                else if (eventArgs.RoutingKey == "update.weatercode")
+                else if (eventArgs.RoutingKey == "update.weathercode")
                 {
                     entry.WeatherCode = message;
                 }

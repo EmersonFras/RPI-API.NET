@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using RPI_API.Data;
 using RPI_API.DTOs;
 using RPI_API.Utils;
@@ -23,13 +24,21 @@ namespace RPI_API.Controllers
         // Set/Update the current Display
         // POST api/display
         [HttpPost]
-        public async Task<IActionResult> UpdateDisplay([FromBody] string data)
+        public async Task<IActionResult> UpdateDisplay([FromBody] JObject jsondata)
         {
-            
-            bool ack = await _emitter.EmitAsync(data, "display.set");
+            var data = jsondata["display"]?.ToString();
 
-            if (ack) return Ok();
-            else return BadRequest("Failed to send message to Display Service");
+            if (data != null)
+                {
+                    bool ack = await _emitter.EmitAsync(data, "display.set");
+
+                    if (ack) return Ok();
+                    else return BadRequest("Failed to send message to Display Service");
+                }
+                else
+                {
+                    return BadRequest("Invalid JSON format: 'data' field is missing.");
+                }
         }
 
         // Clearing the display
@@ -53,6 +62,7 @@ namespace RPI_API.Controllers
                 return BadRequest("Invalid data");
             }
 
+            Console.WriteLine($"[Display Data] Sending message {data.ToString()}");
             // Waits for publisher confirmation 
             bool ack = await _emitter.EmitAsync(message: data.ToString(),
                                                 "display.data");
