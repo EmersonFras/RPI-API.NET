@@ -3,13 +3,14 @@ using RPI_API.Models;
 
 namespace RPI_API.Data
 {
-    public class WeatherDisplayContext : DbContext
+    public class DisplayContext : DbContext
     {
-        public WeatherDisplayContext(DbContextOptions options) : base(options)
+        public DisplayContext(DbContextOptions options) : base(options)
         {
         }
 
         public DbSet<WeatherDisplayData> WeatherDisplayData { get; set; }
+        public DbSet<DisplayData> DisplayData { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,10 +20,18 @@ namespace RPI_API.Data
                 {
                     Id = 1,
                     Text = "",
-                    StartTime = "08:00",
-                    StopTime = "18:00",
                     Temperature = "72°F",
                     WeatherCode = "3",
+                    UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0)
+                }
+            );
+
+            ModelBuilder.Entity<DisplayData>().HasData(
+                new DisplayData
+                {
+                    Id = 1,
+                    StartTime = "08:00",
+                    StopTime = "20:00",
                     UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0)
                 }
             );

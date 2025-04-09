@@ -76,14 +76,16 @@ namespace RPI_API.Controllers
             */
             if (ack)
             {
-                var entry = await _context.WeatherDisplayData.FirstOrDefaultAsync();
-                if (entry != null)
+                var weatherEntry = await _context.WeatherDisplayData.FirstOrDefaultAsync();
+                var displayEntry = await _context.DisplayData.FirstOrDefaultAsync();
+                if (weatherEntry != null && displayEntry != null)
                 {
-                    entry.Text = data.Text;
-                    entry.StartTime = data.StartTime;
-                    entry.StopTime = data.StopTime;
+                    weatherEntry.Text = data.Text;
+                    displayEntry.StartTime = data.StartTime;
+                    displayEntry.StopTime = data.StopTime;
 
-                    entry.UpdatedAt = DateTime.Now;
+                    displayEntry.UpdatedAt = DateTime.Now;
+                    
                     await _context.SaveChangesAsync();
                 }
                 else
