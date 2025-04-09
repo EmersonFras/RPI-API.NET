@@ -48,13 +48,12 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowNetlify",
-        policy =>
-        {
-            policy.WithOrigins("https://rpi-matrix.netlify.app")  // Allow requests from your Netlify domain
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("https://rpi-matrix.netlify.app", "http://127.0.0.1:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
@@ -66,9 +65,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowNetlify");
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthorization();
 

@@ -32,7 +32,7 @@ namespace RPI_API.Controllers
                 {
                     bool ack = await _emitter.EmitAsync(data, "display.set");
 
-                    if (ack) return Ok();
+                    if (ack) return Ok(new { success = true });
                     else return BadRequest("Failed to send message to Display Service");
                 }
                 else
@@ -48,7 +48,7 @@ namespace RPI_API.Controllers
         {
             bool ack = await _emitter.EmitAsync("clear", "display.set");
 
-            if (ack) return Ok();
+            if (ack) return Ok(new { success = true });
             else return BadRequest("Failed to send message to Display Service");
         }
 
@@ -91,7 +91,7 @@ namespace RPI_API.Controllers
                     Console.WriteLine($"[Display] No entry found in the database");
                 }
 
-                return Ok();
+                return Ok(new { success = true });
             }
             else return BadRequest("Failed to send message to Display Service");
         }
