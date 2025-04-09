@@ -5,12 +5,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RPI_API.Migrations
 {
-    /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initial : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "DisplayData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    StartTime = table.Column<string>(type: "TEXT", nullable: true),
+                    StopTime = table.Column<string>(type: "TEXT", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DisplayData", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "WeatherDisplayData",
                 columns: table => new
@@ -18,8 +31,6 @@ namespace RPI_API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Text = table.Column<string>(type: "TEXT", nullable: true),
-                    StartTime = table.Column<string>(type: "TEXT", nullable: true),
-                    StopTime = table.Column<string>(type: "TEXT", nullable: true),
                     Temperature = table.Column<string>(type: "TEXT", nullable: true),
                     WeatherCode = table.Column<string>(type: "TEXT", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
@@ -30,14 +41,21 @@ namespace RPI_API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "DisplayData",
+                columns: new[] { "Id", "StartTime", "StopTime", "UpdatedAt" },
+                values: new object[] { 1, "08:00", "20:00", new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
                 table: "WeatherDisplayData",
-                columns: new[] { "Id", "StartTime", "StopTime", "Temperature", "Text", "UpdatedAt", "WeatherCode" },
-                values: new object[] { 1, "08:00", "18:00", "72°F", "", new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified), "3" });
+                columns: new[] { "Id", "Temperature", "Text", "UpdatedAt", "WeatherCode" },
+                values: new object[] { 1, "72°F", "", new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified), "3" });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "DisplayData");
+
             migrationBuilder.DropTable(
                 name: "WeatherDisplayData");
         }

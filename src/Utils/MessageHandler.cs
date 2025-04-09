@@ -9,9 +9,9 @@ namespace RPI_API.Utils
     public class MessageHandler
     {
 
-        private readonly WeatherDisplayContext _context;
+        private readonly DisplayContext _context;
 
-        public MessageHandler(WeatherDisplayContext context)
+        public MessageHandler(DisplayContext context)
         {
             _context = context;
         }

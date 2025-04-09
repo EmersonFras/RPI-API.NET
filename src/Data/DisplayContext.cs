@@ -26,7 +26,7 @@ namespace RPI_API.Data
                 }
             );
 
-            ModelBuilder.Entity<DisplayData>().HasData(
+            modelBuilder.Entity<DisplayData>().HasData(
                 new DisplayData
                 {
                     Id = 1,

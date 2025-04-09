@@ -13,9 +13,9 @@ namespace RPI_API.Controllers
     public class DisplayController : ControllerBase
     {
         private readonly Emitter _emitter;
-        private readonly WeatherDisplayContext _context;
+        private readonly DisplayContext _context;
 
-        public DisplayController(Emitter emitter, WeatherDisplayContext context)
+        public DisplayController(Emitter emitter, DisplayContext context)
         {
             _emitter = emitter;
             _context = context;
@@ -85,7 +85,7 @@ namespace RPI_API.Controllers
                     displayEntry.StopTime = data.StopTime;
 
                     displayEntry.UpdatedAt = DateTime.Now;
-                    
+
                     await _context.SaveChangesAsync();
                 }
                 else

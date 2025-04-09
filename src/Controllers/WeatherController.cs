@@ -9,9 +9,9 @@ namespace RPI_API.Controllers
     public class WeatherController : ControllerBase
     {
 
-        public readonly WeatherDisplayContext _context;
+        public readonly DisplayContext _context;
 
-        public WeatherController(WeatherDisplayContext context)
+        public WeatherController(DisplayContext context)
         {
             _context = context;
         }

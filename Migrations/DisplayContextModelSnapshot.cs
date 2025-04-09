@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RPI_API.Data;
 
@@ -10,17 +9,15 @@ using RPI_API.Data;
 
 namespace RPI_API.Migrations
 {
-    [DbContext(typeof(WeatherDisplayContext))]
-    [Migration("20250406231030_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(DisplayContext))]
+    partial class DisplayContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
 
-            modelBuilder.Entity("RPI_API.Models.WeatherDisplayData", b =>
+            modelBuilder.Entity("RPI_API.Models.DisplayData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,6 +28,29 @@ namespace RPI_API.Migrations
 
                     b.Property<string>("StopTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DisplayData");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StartTime = "08:00",
+                            StopTime = "20:00",
+                            UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("RPI_API.Models.WeatherDisplayData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Temperature")
                         .HasColumnType("TEXT");
@@ -52,8 +72,6 @@ namespace RPI_API.Migrations
                         new
                         {
                             Id = 1,
-                            StartTime = "08:00",
-                            StopTime = "18:00",
                             Temperature = "72°F",
                             Text = "",
                             UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified),
