@@ -263,3 +263,6 @@ FakesAssemblies/
 *.opt
 
 *.db
+*.db-shm
+*.db-wal
+

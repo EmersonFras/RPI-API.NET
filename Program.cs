@@ -22,7 +22,7 @@ builder.Services.AddHostedService<ReceiveUpdates>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<WeatherDisplayContext>(options =>
+builder.Services.AddDbContext<DisplayContext>(options =>
     options.UseSqlite(connectionString));
 
 
@@ -33,18 +33,22 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
+// Configure Kestrel to use a .pfx file for HTTPS
 var pfxPassword = Environment.GetEnvironmentVariable("PFX_PASSWORD");
-builder.WebHost.ConfigureKestrel(serverOptions =>
+if (!string.IsNullOrEmpty(pfxPassword))
 {
-    // Configure Kestrel to listen for HTTPS traffic on port 443
-    serverOptions.ListenAnyIP(443, listenOptions =>
+    builder.WebHost.ConfigureKestrel(serverOptions =>
     {
-        // Use the .pfx file and password to set up the HTTPS certificate
-        listenOptions.UseHttps("/https-certs/aspnetapp.pfx", pfxPassword);
-    });
+        // Configure Kestrel to listen for HTTPS traffic on port 443
+        serverOptions.ListenAnyIP(443, listenOptions =>
+        {
+            // Use the .pfx file and password to set up the HTTPS certificate
+            listenOptions.UseHttps("/https-certs/aspnetapp.pfx", pfxPassword);
+        });
 
-    serverOptions.ListenAnyIP(80);
-});
+        serverOptions.ListenAnyIP(80);
+    });
+}
 
 builder.Services.AddCors(options =>
 {
