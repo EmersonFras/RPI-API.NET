@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using dotenv.net;
 using RPI_API.Data;
 using RPI_API.Services;
 using RPI_API.Utils;
@@ -60,6 +61,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+DotEnv.Load();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,7 +73,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOrigins");
 
