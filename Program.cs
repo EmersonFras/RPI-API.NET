@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using dotenv.net;
 using RPI_API.Data;
 using RPI_API.Services;
@@ -31,6 +34,40 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+DotEnv.Load();
+
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");  
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options => 
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Cookies["jwt_token"];
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "https://rpi-display.duckdns.org:3000",
+        ValidAudience = "https://rpi-matrix.netlify.app",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
@@ -61,7 +98,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-DotEnv.Load();
+
 
 var app = builder.Build();
 
@@ -77,7 +114,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
