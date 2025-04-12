@@ -22,21 +22,85 @@ namespace RPI_API.Controllers
 
         public AuthController()
         {
-            _clientId = Environment.GetEnvironmentVariable("CLIENT_ID");
-            _clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
-            _redirectUri = Environment.GetEnvironmentVariable("REDIRECT_URI");
+            _clientId = Environment.GetEnvironmentVariable("CLIENT_ID")!;
+            _clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET")!;
+            _redirectUri = Environment.GetEnvironmentVariable("REDIRECT_URI")!;
         }
 
+        // GET: api/auth/check
         [Authorize]
-        [HttpGet("test")]
-        public async Task<ActionResult> Test()
+        [HttpGet("check")]
+        public ActionResult Check()
         {
-            return Ok( new { message = "Test" });
+            return Ok( new { success = true, message = "Logged In" });
+        }
+
+        //GET: api/auth/refresh
+        [Authorize]
+        [HttpGet("refresh")]
+        public async Task<ActionResult> Refresh()
+        {
+            using (var client = new HttpClient())
+            {
+                var refresh_token = User.Claims.FirstOrDefault(c => c.Type == "spotify_refresh_token")?.Value;
+
+                if (refresh_token == null)
+                {
+                    return BadRequest(new { sucess = false });
+                }
+
+                // Body for the request
+                var requestData = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                    new KeyValuePair<string, string>("refresh_token", refresh_token)
+                });
+
+                var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}"));
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+
+                var response = await client.PostAsync("https://accounts.spotify.com/api/token", requestData);
+
+                // Reads the response
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, content);
+                }
+
+                //  Takes HTTP Response -> json
+                var json = JsonDocument.Parse(content);
+                
+                // Extracts tokens from json
+                var accessToken = json.RootElement.GetProperty("access_token").GetString();
+
+                if (accessToken == null)
+                {
+                    return BadRequest(new { success = false });
+                }
+
+                // Util method to generate token with the claims for tokens.
+                var jwt = JwtToken.GenerateJwtToken(accessToken, refresh_token);
+
+                // Adds the jwt token as a cookie
+                Response.Cookies.Append("jwt_token", jwt, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
+
+                // Return response including cookies
+                return Ok(new { success = true, content });
+            }
         }
 
         // GET: api/auth/login
         [HttpGet("login")]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
             string scope = "user-read-private user-read-email";
             // Query builder for params
@@ -96,6 +160,11 @@ namespace RPI_API.Controllers
                 // Extracts tokens from json
                 var accessToken = json.RootElement.GetProperty("access_token").GetString();
                 var refreshToken = json.RootElement.GetProperty("refresh_token").GetString();
+
+                if (accessToken == null || refreshToken == null)
+                {
+                    return BadRequest(new { success = false });
+                }
 
                 // Util method to generate token with the claims for tokens.
                 var jwt = JwtToken.GenerateJwtToken(accessToken, refreshToken);

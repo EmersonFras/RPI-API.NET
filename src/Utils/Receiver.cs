@@ -43,7 +43,7 @@ namespace RPI_API.Utils
                     await _channel.QueueBindAsync(queue: _queueName, exchange: "led_matrix", routingKey: _bindingKey);
                     break;
                 }
-                catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+                catch when (!cancellationToken.IsCancellationRequested)
                 {
                     Console.WriteLine("[Receiver] Error Initializing RabbitMQ. Retrying in 30 seconds...");
                     await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);

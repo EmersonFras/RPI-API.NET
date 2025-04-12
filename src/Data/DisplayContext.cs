@@ -9,8 +9,8 @@ namespace RPI_API.Data
         {
         }
 
-        public DbSet<WeatherDisplayData> WeatherDisplayData { get; set; }
-        public DbSet<DisplayData> DisplayData { get; set; }
+        public DbSet<WeatherDisplayData> WeatherDisplayData { get; set; } = null!;
+        public DbSet<DisplayData> DisplayData { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

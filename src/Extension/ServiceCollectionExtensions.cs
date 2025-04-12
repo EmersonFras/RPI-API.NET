@@ -39,6 +39,11 @@ namespace RPI_API.Extensions
         {
             var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");  
 
+            if (jwtKey == null) 
+            {
+                throw new InvalidOperationException("JWT_KEY environment variable is not set.");
+            }
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

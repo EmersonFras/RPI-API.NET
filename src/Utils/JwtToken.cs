@@ -11,7 +11,7 @@ namespace RPI_API.Utils
 
         static JwtToken()
         {
-            _secretKey = Environment.GetEnvironmentVariable("JWT_KEY");   
+            _secretKey = Environment.GetEnvironmentVariable("JWT_KEY")!;   
         }
 
         public static string GenerateJwtToken(string access_token, string refresh_token)
