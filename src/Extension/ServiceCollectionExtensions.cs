@@ -85,7 +85,8 @@ namespace RPI_API.Extensions
                 {
                     policy.WithOrigins("https://rpi-matrix.netlify.app", "http://127.0.0.1:5173")
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
 

@@ -35,9 +35,6 @@ if (!string.IsNullOrEmpty(pfxPassword))
 }
 
 
-
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

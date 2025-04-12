@@ -32,7 +32,7 @@ namespace RPI_API.Controllers
         [HttpGet("check")]
         public ActionResult Check()
         {
-            return Ok( new { success = true, message = "Logged In" });
+            return Ok( new { success = true, isAuthenticated = true, message = "Logged In" });
         }
 
         //GET: api/auth/refresh
@@ -89,7 +89,7 @@ namespace RPI_API.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(7)
                 });
 
@@ -174,13 +174,28 @@ namespace RPI_API.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(7)
                 });
 
                 // Return response including cookies
                 return Ok(new { success = true });
             }
+        }
+
+        //POST: api/auth/logout
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Append("jwt_token", "", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+
+            return Ok(new { success = true });
         }
     }
 }

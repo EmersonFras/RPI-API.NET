@@ -34,7 +34,7 @@ namespace RPI_API.Controllers
                 //  Takes HTTP Response -> json
                 var json = JsonDocument.Parse(content);
                 
-                var albumCoverUrls = new List<string>();
+                Dictionary<string, string> albums = new Dictionary<string, string>();
 
                 // Loop to pull out the image urls
                 foreach (var item in json.RootElement.GetProperty("albums").GetProperty("items").EnumerateArray())
@@ -42,12 +42,16 @@ namespace RPI_API.Controllers
                     if (item.TryGetProperty("images", out JsonElement imagesElement) && imagesElement.GetArrayLength() > 0)
                     {
                         var imageUrl = imagesElement[0].GetProperty("url").GetString();
-                        albumCoverUrls.Add(imageUrl);
+                        var albumName = item.GetProperty("name").GetString();
+                        if (imageUrl == null || albumName == null) {
+                            return BadRequest(new { success = false }); 
+                        }
+                        albums[albumName] = imageUrl;
                     }
                 }
 
 
-                return Ok(albumCoverUrls);
+                return Ok(new { success = true, items = albums });
             }
         }
     }
