@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RPI_API.Data;
 using RPI_API.DTOs;
@@ -63,8 +64,10 @@ namespace RPI_API.Controllers
             }
 
             Console.WriteLine($"[Display Data] Sending message {data.ToString()}");
+
+            var json = JsonConvert.SerializeObject(data);
             // Waits for publisher confirmation 
-            bool ack = await _emitter.EmitAsync(message: data.ToString(),
+            bool ack = await _emitter.EmitAsync(message: json,
                                                 "display.data");
 
 
@@ -80,9 +83,14 @@ namespace RPI_API.Controllers
                 var displayEntry = await _context.DisplayData.FirstOrDefaultAsync();
                 if (weatherEntry != null && displayEntry != null)
                 {
-                    weatherEntry.Text = data.Text;
-                    displayEntry.StartTime = data.StartTime;
-                    displayEntry.StopTime = data.StopTime;
+                    if (data.Text != null)
+                        weatherEntry.Text = data.Text;
+
+                    if (data.StartTime != null)
+                        displayEntry.StartTime = data.StartTime;
+
+                    if (data.StopTime != null)
+                        displayEntry.StopTime = data.StopTime;
 
                     displayEntry.UpdatedAt = DateTime.Now;
 

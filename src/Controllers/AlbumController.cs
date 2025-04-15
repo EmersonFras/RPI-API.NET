@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 using System.Text;
+using RPI_API.Utils;
 
 namespace RPI_API.Controllers
 {
@@ -12,6 +14,14 @@ namespace RPI_API.Controllers
     [ApiController]
     public class AlbumController : ControllerBase
     {
+
+        private readonly Emitter _emitter;
+
+        public AlbumController(Emitter emitter) 
+        {
+            _emitter = emitter;
+        }
+
         // GET: api/album?search={value}
         [HttpGet]
         public async Task<IActionResult> GetAlbums([FromQuery] string search)
@@ -53,6 +63,18 @@ namespace RPI_API.Controllers
 
                 return Ok(new { success = true, items = albums });
             }
+        }
+
+        [HttpPost("display")]
+        public async Task<IActionResult> Display([FromBody] JObject jsondata)
+        {
+            var img = jsondata["img"]?.ToString();
+
+            if (img == null) return BadRequest(new { success = false });
+
+            await _emitter.EmitAsync($"Album {img}", "display.set");
+            
+            return Ok(new { success = true });
         }
     }
 }
