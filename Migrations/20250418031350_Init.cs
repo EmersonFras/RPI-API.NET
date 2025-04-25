@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RPI_API.Migrations
 {
-    public partial class initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +22,20 @@ namespace RPI_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DisplayData", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImageData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FileName = table.Column<string>(type: "TEXT", nullable: true),
+                    Url = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImageData", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,6 +69,9 @@ namespace RPI_API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "DisplayData");
+
+            migrationBuilder.DropTable(
+                name: "ImageData");
 
             migrationBuilder.DropTable(
                 name: "WeatherDisplayData");

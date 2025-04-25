@@ -11,8 +11,8 @@ using RPI_API.Data;
 namespace RPI_API.Migrations
 {
     [DbContext(typeof(DisplayContext))]
-    [Migration("20250409155428_initial")]
-    partial class initial
+    [Migration("20250418031350_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,23 @@ namespace RPI_API.Migrations
                             StopTime = "20:00",
                             UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0, 0, DateTimeKind.Unspecified)
                         });
+                });
+
+            modelBuilder.Entity("RPI_API.Models.ImageData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImageData");
                 });
 
             modelBuilder.Entity("RPI_API.Models.WeatherDisplayData", b =>

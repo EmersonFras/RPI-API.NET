@@ -46,6 +46,23 @@ namespace RPI_API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("RPI_API.Models.ImageData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImageData");
+                });
+
             modelBuilder.Entity("RPI_API.Models.WeatherDisplayData", b =>
                 {
                     b.Property<int>("Id")

@@ -11,6 +11,7 @@ namespace RPI_API.Data
 
         public DbSet<WeatherDisplayData> WeatherDisplayData { get; set; } = null!;
         public DbSet<DisplayData> DisplayData { get; set; } = null!;
+        public DbSet<ImageData> ImageData { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
