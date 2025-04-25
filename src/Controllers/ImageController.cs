@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RPI_API.Data;
 using RPI_API.Models;
+using RPI_API.Utils;
 
 namespace RPI_API.Controllers
 {
@@ -12,10 +13,12 @@ namespace RPI_API.Controllers
     public class ImageController : ControllerBase
     {
         private readonly DisplayContext _context;
+        private readonly Emitter _emitter;
 
-        public ImageController(DisplayContext context)
+        public ImageController(DisplayContext context, Emitter emitter)
         {
             _context = context;
+            _emitter = emitter;
         }
 
         // GET: api/image
@@ -47,18 +50,43 @@ namespace RPI_API.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var fileUrl = $"/uploads/{file.FileName}";
+            var fileUrl = $"https://rpi-display.duckdns.org:3000/uploads/{file.FileName}";
 
             var imageObject = new ImageData
             {
                 FileName = file.FileName,
-                Url =  $"https://rpi-display.duckdns.org:3000/uploads/{file.FileName}"
+                Url =  fileUrl
             };
 
             _context.ImageData.Add(imageObject);
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, url = fileUrl, message = "File Uploaded Successfully"});
+            await _emitter.EmitAsync(fileUrl, "display.set");
+
+            return Ok(new { success = true, message = "File Uploaded Successfully"});
+        }
+
+        // DELETE: api/image/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFile(int id)
+        {
+            var image = await _context.ImageData.FindAsync(id);
+            
+            if (image == null)
+                return NotFound(new { success = false, message = "Image not found." });
+
+            // Remove the file from the file system
+            var filePath = Path.Combine("uploads", image.FileName);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            // Remove from database
+            _context.ImageData.Remove(image);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Image deleted successfully." });
         }
     }
 }
