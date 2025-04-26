@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using RPI_API.Data;
 using RPI_API.Models;
 using RPI_API.Utils;
@@ -61,9 +62,28 @@ namespace RPI_API.Controllers
             _context.ImageData.Add(imageObject);
             await _context.SaveChangesAsync();
 
-            await _emitter.EmitAsync(fileUrl, "display.set");
+            await _emitter.EmitAsync($"Image {fileUrl}", "display.set");
 
             return Ok(new { success = true, message = "File Uploaded Successfully"});
+        }
+
+        //POST: api/image/set
+        [HttpPost("set")]
+        public async Task<IActionResult> SetDisplayImage([FromBody] JObject jsondata)
+        {
+            var idString = jsondata["id"]?.ToString();
+
+            if (idString == null) return BadRequest(new { success = false, message = "ID not provided." });
+
+            int id = Int32.Parse(idString);
+
+            var image = await _context.ImageData.FindAsync(id);
+            if (image == null)
+                return NotFound(new { success = false, message = "Image not found." });
+
+            await _emitter.EmitAsync($"Image {image.Url}", "display.set");
+
+            return Ok(new { success = true, message = "Image sent to display." });
         }
 
         // DELETE: api/image/{id}

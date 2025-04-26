@@ -72,7 +72,7 @@ namespace RPI_API.Controllers
 
             if (img == null) return BadRequest(new { success = false });
 
-            await _emitter.EmitAsync($"Album {img}", "display.set");
+            await _emitter.EmitAsync($"Image {img}", "display.set");
             
             return Ok(new { success = true });
         }
