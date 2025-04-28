@@ -9,8 +9,10 @@ namespace RPI_API.DTOs
 
         [JsonProperty("stop_time")]
         public string? StopTime { get; set; }
+        [JsonProperty("brightness")]
+        public string? Brightness { get; set; }
 
-        [JsonProperty("text")]
+        [JsonProperty("text")] 
         public string? Text { get; set; }
 
         public override string ToString()

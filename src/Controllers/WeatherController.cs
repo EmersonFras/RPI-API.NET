@@ -22,15 +22,14 @@ namespace RPI_API.Controllers
         public async Task<IActionResult> GetWeather()
         {
             var weatherEntry = await _context.WeatherDisplayData.FirstOrDefaultAsync();
-            var displayEntry = await _context.DisplayData.FirstOrDefaultAsync();
 
-            if (weatherEntry == null || displayEntry == null)
+            if (weatherEntry == null)
             {
                 return NotFound("No weather data found");
             }
 
             // Needs to return { startTime, stopTime, Text }
-            return Ok(new { success = true, startTime = displayEntry.StartTime, stopTime = displayEntry.StopTime, text = weatherEntry.Text });
+            return Ok(new { success = true, text = weatherEntry.Text });
         }
     }
 }

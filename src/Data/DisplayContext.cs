@@ -33,6 +33,7 @@ namespace RPI_API.Data
                     Id = 1,
                     StartTime = "08:00",
                     StopTime = "20:00",
+                    Brightness = "100",
                     UpdatedAt = new DateTime(2025, 4, 6, 8, 0, 0)
                 }
             );

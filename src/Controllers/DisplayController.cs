@@ -22,6 +22,20 @@ namespace RPI_API.Controllers
             _context = context;
         }
 
+        // GET api/display
+        [HttpGet]
+        public async Task<IActionResult> GetDisplayData() {
+            var displayEntry = await _context.DisplayData.FirstOrDefaultAsync();
+
+            if (displayEntry == null)
+            {
+                return NotFound("No weather data found");
+            }
+
+            // Needs to return { startTime, stopTime, Text }
+            return Ok(new { success = true, startTime = displayEntry.StartTime, stopTime = displayEntry.StopTime, brightness = displayEntry.Brightness });
+        }
+
         // Set/Update the current Display
         // POST api/display
         [HttpPost]
@@ -63,7 +77,7 @@ namespace RPI_API.Controllers
                 return BadRequest("Invalid data");
             }
 
-            Console.WriteLine($"[Display Data] Sending message {data.ToString()}");
+            Console.WriteLine($"[Display Data] Sending message {data}");
 
             var json = JsonConvert.SerializeObject(data);
             // Waits for publisher confirmation 
@@ -91,6 +105,9 @@ namespace RPI_API.Controllers
 
                     if (data.StopTime != null)
                         displayEntry.StopTime = data.StopTime;
+
+                    if (data.Brightness != null)
+                        displayEntry.Brightness = data.Brightness;
 
                     displayEntry.UpdatedAt = DateTime.Now;
 
