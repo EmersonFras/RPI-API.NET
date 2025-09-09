@@ -50,7 +50,7 @@ internal class Program
         }
 
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.UseCors("AllowSpecificOrigins");
 

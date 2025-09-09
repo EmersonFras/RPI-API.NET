@@ -266,5 +266,10 @@ FakesAssemblies/
 *.db-shm
 *.db-wal
 
+# Uploads
+src/Data/uploads/*
+
+!src/Data/uploads/.gitkeep
+
 .env
 

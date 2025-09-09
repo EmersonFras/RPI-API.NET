@@ -51,12 +51,14 @@ namespace RPI_API.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            var fileUrl = $"https://rpi-display.duckdns.org:3000/uploads/{file.FileName}";
+            var fileUrl = $"http://api:80/uploads/{file.FileName}";
+            Console.WriteLine($"[Image Controller] Image URL is {fileUrl}");
 
             var imageObject = new ImageData
             {
                 FileName = file.FileName,
-                Url =  fileUrl
+                Url = $"https://rpi-display.duckdns.org:3000/uploads/{file.FileName}",
+                DisplayUrl =  fileUrl
             };
 
             _context.ImageData.Add(imageObject);
@@ -81,7 +83,7 @@ namespace RPI_API.Controllers
             if (image == null)
                 return NotFound(new { success = false, message = "Image not found." });
 
-            await _emitter.EmitAsync($"Image {image.Url}", "display.set");
+            await _emitter.EmitAsync($"Image {image.DisplayUrl}", "display.set");
 
             return Ok(new { success = true, message = "Image sent to display." });
         }
